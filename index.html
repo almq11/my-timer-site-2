@@ -1,0 +1,138 @@
+
+<!DOCTYPE html>
+<html lang="ar">
+<head>
+  <meta charset="UTF-8">
+  <title>مؤقت مع تسجيل النتائج</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      direction: rtl;
+      text-align: center;
+      padding: 30px;
+      background-color: #f0f4f8;
+    }
+
+    h1 {
+      margin-bottom: 20px;
+    }
+
+    #timer {
+      font-size: 48px;
+      margin: 20px 0;
+      color: #333;
+    }
+
+    button {
+      font-size: 18px;
+      padding: 10px 20px;
+      margin: 10px;
+      cursor: pointer;
+    }
+
+    table {
+      margin: 30px auto;
+      width: 80%;
+      border-collapse: collapse;
+      background-color: #fff;
+    }
+
+    th, td {
+      padding: 12px;
+      border: 1px solid #ccc;
+    }
+
+    th {
+      background-color: #e0e0e0;
+    }
+  </style>
+</head>
+<body>
+  <h1>مؤقت بسيط مع حفظ النتائج</h1>
+
+  <div id="timer">00:00:00</div>
+
+  <button onclick="startTimer()">ابدأ</button>
+  <button onclick="stopTimer()">أوقف</button>
+  <button onclick="clearTable()">مسح السجلات</button>
+
+  <table>
+    <thead>
+      <tr>
+        <th>المدة</th>
+        <th>التاريخ</th>
+        <th>اليوم</th>
+      </tr>
+    </thead>
+    <tbody id="resultsTable"></tbody>
+  </table>
+
+  <script>
+    let startTime, intervalId;
+    let isRunning = false;
+
+    function formatTime(ms) {
+      const totalSeconds = Math.floor(ms / 1000);
+      const hours = String(Math.floor(totalSeconds / 3600)).padStart(2, '0');
+      const minutes = String(Math.floor((totalSeconds % 3600) / 60)).padStart(2, '0');
+      const seconds = String(totalSeconds % 60).padStart(2, '0');
+      return `${hours}:${minutes}:${seconds}`;
+    }
+
+    function startTimer() {
+      if (isRunning) return;
+      startTime = Date.now();
+      isRunning = true;
+      intervalId = setInterval(() => {
+        const now = Date.now();
+        document.getElementById('timer').textContent = formatTime(now - startTime);
+      }, 1000);
+    }
+
+    function stopTimer() {
+      if (!isRunning) return;
+      clearInterval(intervalId);
+      const endTime = Date.now();
+      const duration = formatTime(endTime - startTime);
+      const now = new Date();
+      const date = now.toLocaleDateString('ar-EG');
+      const day = now.toLocaleDateString('ar-EG', { weekday: 'long' });
+
+      saveResult(duration, date, day);
+      renderTable();
+      isRunning = false;
+      document.getElementById('timer').textContent = "00:00:00";
+    }
+
+    function saveResult(duration, date, day) {
+      const results = JSON.parse(localStorage.getItem('timerResults')) || [];
+      results.push({ duration, date, day });
+      localStorage.setItem('timerResults', JSON.stringify(results));
+    }
+
+    function renderTable() {
+      const table = document.getElementById('resultsTable');
+      table.innerHTML = '';
+      const results = JSON.parse(localStorage.getItem('timerResults')) || [];
+
+      results.forEach(entry => {
+        const row = document.createElement('tr');
+        row.innerHTML = `
+          <td>${entry.duration}</td>
+          <td>${entry.date}</td>
+          <td>${entry.day}</td>
+        `;
+        table.appendChild(row);
+      });
+    }
+
+    function clearTable() {
+      localStorage.removeItem('timerResults');
+      renderTable();
+    }
+
+    // Load saved data when page loads
+    window.onload = renderTable;
+  </script>
+</body>
+</html>
