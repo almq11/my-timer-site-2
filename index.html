@@ -1,75 +1,335 @@
-
 <!DOCTYPE html>
 <html lang="ar">
 <head>
-  <meta charset="UTF-8">
-  <title>مؤقت مع تسجيل النتائج</title>
+  <meta charset="UTF-8" />
+  <title>مؤقت العمل - الإصدار المحسّن</title>
   <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    
     body {
-      font-family: Arial, sans-serif;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
       direction: rtl;
       text-align: center;
+      padding: 20px;
+      background: linear-gradient(135deg, #1a2a6c, #b21f1f, #1a2a6c);
+      color: white;
+      min-height: 100vh;
+      line-height: 1.6;
+    }
+
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+      background-color: rgba(0, 0, 0, 0.7);
+      border-radius: 15px;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
       padding: 30px;
-      background-color: #f0f4f8;
+      position: relative;
+      overflow: hidden;
+      border: 1px solid #3498db;
+    }
+
+    .container::before {
+      content: "";
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 8px;
+      background: linear-gradient(90deg, #3498db, #2ecc71);
     }
 
     h1 {
-      margin-bottom: 20px;
+      margin: 20px 0;
+      color: #fff;
+      font-size: 2.5rem;
+      text-shadow: 0 0 10px rgba(52, 152, 219, 0.7);
+    }
+
+    h2 {
+      color: #2ecc71;
+      margin: 30px 0 20px;
+      border-bottom: 2px solid #3498db;
+      padding-bottom: 10px;
+      text-shadow: 0 0 5px rgba(46, 204, 113, 0.5);
+    }
+
+    #timer-container {
+      background: rgba(0, 0, 0, 0.5);
+      border-radius: 12px;
+      padding: 25px;
+      margin: 20px auto;
+      box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+      max-width: 500px;
+      border: 1px solid #e0e7ff;
+      backdrop-filter: blur(5px);
     }
 
     #timer {
-      font-size: 48px;
+      font-size: 3.5rem;
       margin: 20px 0;
-      color: #333;
+      color: #fff;
+      font-family: 'Courier New', monospace;
+      font-weight: bold;
+      letter-spacing: 3px;
+      text-shadow: 0 0 10px rgba(255, 255, 255, 0.7);
+      padding: 10px;
+      background: rgba(0, 0, 0, 0.3);
+      border-radius: 8px;
+    }
+
+    .controls {
+      display: flex;
+      justify-content: center;
+      gap: 15px;
+      margin-top: 20px;
+      flex-wrap: wrap;
     }
 
     button {
-      font-size: 18px;
-      padding: 10px 20px;
-      margin: 10px;
+      font-size: 1.1rem;
+      padding: 12px 25px;
+      margin: 8px;
       cursor: pointer;
+      border: none;
+      border-radius: 8px;
+      font-weight: 600;
+      transition: all 0.3s ease;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
+      min-width: 140px;
+      background: linear-gradient(to right, #3498db, #2980b9);
+      color: white;
+      position: relative;
+      overflow: hidden;
+      border: 1px solid rgba(255, 255, 255, 0.2);
+    }
+
+    button::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: -100%;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+      transition: 0.5s;
+    }
+
+    button:hover::before {
+      left: 100%;
+    }
+
+    button:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 6px 12px rgba(0, 0, 0, 0.4);
+    }
+
+    button:active {
+      transform: translateY(1px);
+    }
+
+    #startBtn {
+      background: linear-gradient(to right, #2ecc71, #27ae60);
+    }
+
+    #pauseBtn {
+      background: linear-gradient(to right, #f39c12, #e67e22);
+    }
+
+    #stopBtn {
+      background: linear-gradient(to right, #e74c3c, #c0392b);
+    }
+
+    #clearBtn {
+      background: linear-gradient(to right, #9b59b6, #8e44ad);
     }
 
     table {
       margin: 30px auto;
-      width: 80%;
+      width: 100%;
       border-collapse: collapse;
-      background-color: #fff;
+      background-color: rgba(255, 255, 255, 0.1);
+      box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+      border-radius: 10px;
+      overflow: hidden;
+      backdrop-filter: blur(5px);
+      border: 1px solid rgba(255, 255, 255, 0.1);
     }
 
-    th, td {
-      padding: 12px;
-      border: 1px solid #ccc;
+    th,
+    td {
+      padding: 14px;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      text-align: center;
+      color: #fff;
     }
 
     th {
-      background-color: #e0e0e0;
+      background: linear-gradient(to bottom, rgba(52, 152, 219, 0.7), rgba(41, 128, 185, 0.7));
+      color: white;
+      font-weight: 600;
+    }
+
+    tr:nth-child(even) {
+      background-color: rgba(255, 255, 255, 0.05);
+    }
+
+    tr:hover {
+      background-color: rgba(52, 152, 219, 0.2);
+      transition: background-color 0.2s;
+    }
+
+    .edit-btn {
+      background: linear-gradient(to right, #3498db, #2980b9);
+      color: white;
+      border: none;
+      padding: 5px 10px;
+      border-radius: 4px;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .edit-btn:hover {
+      background: linear-gradient(to right, #2ecc71, #27ae60);
+      transform: scale(1.05);
+    }
+
+    .stats {
+      display: flex;
+      justify-content: space-around;
+      flex-wrap: wrap;
+      margin: 30px 0;
+    }
+
+    .stat-card {
+      background: rgba(0, 0, 0, 0.5);
+      border-radius: 10px;
+      padding: 25px;
+      min-width: 220px;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+      margin: 15px;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      backdrop-filter: blur(5px);
+      flex: 1;
+      min-width: 250px;
+    }
+
+    .stat-card h3 {
+      margin-top: 0;
+      color: #bdc3c7;
+      font-size: 1.2rem;
+    }
+
+    .stat-value {
+      font-size: 2.2rem;
+      font-weight: bold;
+      color: #fff;
+      margin: 15px 0;
+      text-shadow: 0 0 10px rgba(255, 255, 255, 0.5);
+    }
+
+    @media (max-width: 768px) {
+      #timer {
+        font-size: 2.5rem;
+      }
+      
+      .controls {
+        flex-direction: column;
+        align-items: center;
+      }
+      
+      button {
+        width: 90%;
+        max-width: 300px;
+      }
+      
+      table {
+        font-size: 0.9rem;
+      }
+      
+      .stat-card {
+        min-width: 100%;
+      }
     }
   </style>
 </head>
 <body>
-  <h1>مؤقت بسيط مع حفظ النتائج</h1>
+  <div class="container">
+    <h1>⏱️ مؤقت العمل</h1>
+    
+    <div id="timer-container">
+      <div id="timer">00:00:00</div>
+      
+      <div class="controls">
+        <button id="startBtn" onclick="startTimer()">ابدأ العمل</button>
+        <button id="pauseBtn" onclick="pauseResumeTimer()" disabled>إيقاف مؤقت</button>
+        <button id="stopBtn" onclick="stopTimer()" disabled>إنهاء العمل</button>
+        <button id="clearBtn" onclick="clearTable()">مسح السجلات</button>
+      </div>
+    </div>
+    
+    <div class="stats">
+      <div class="stat-card">
+        <h3>إجمالي ساعات العمل</h3>
+        <div class="stat-value" id="totalHours">0</div>
+        <div>ساعة</div>
+      </div>
+      <div class="stat-card">
+        <h3>إجمالي الأيام</h3>
+        <div class="stat-value" id="totalDays">0</div>
+        <div>يوم</div>
+      </div>
+      <div class="stat-card">
+        <h3>الأرباح التقديرية</h3>
+        <div class="stat-value" id="totalEarnings">0</div>
+        <div>ريال عماني</div>
+      </div>
+    </div>
 
-  <div id="timer">00:00:00</div>
+    <h2>سجلات العمل اليومية</h2>
+    <table>
+      <thead>
+        <tr>
+          <th>مدة العمل</th>
+          <th>التاريخ</th>
+          <th>اليوم</th>
+          <th>تعديل</th>
+        </tr>
+      </thead>
+      <tbody id="resultsTable"></tbody>
+    </table>
 
-  <button onclick="startTimer()">ابدأ</button>
-  <button onclick="stopTimer()">أوقف</button>
-  <button onclick="clearTable()">مسح السجلات</button>
-
-  <table>
-    <thead>
-      <tr>
-        <th>المدة</th>
-        <th>التاريخ</th>
-        <th>اليوم</th>
-      </tr>
-    </thead>
-    <tbody id="resultsTable"></tbody>
-  </table>
+    <h2>ملخص الوقت الشهري</h2>
+    <table id="summaryTable">
+      <thead>
+        <tr>
+          <th>السنة</th>
+          <th>رقم الأسبوع</th>
+          <th>الشهر</th>
+          <th>إجمالي الوقت</th>
+          <th>الصافي بالأرباح (ر.ع)</th>
+        </tr>
+      </thead>
+      <tbody id="summaryBody"></tbody>
+    </table>
+  </div>
 
   <script>
     let startTime, intervalId;
     let isRunning = false;
+    let isPaused = false;
+    let elapsedTime = 0;
+    const hourlyRate = 0.6246; // معدل الأجر بالساعة بالريال العماني
+
+    // عناصر التحكم
+    const startBtn = document.getElementById('startBtn');
+    const pauseBtn = document.getElementById('pauseBtn');
+    const stopBtn = document.getElementById('stopBtn');
+    const timerDisplay = document.getElementById('timer');
 
     function formatTime(ms) {
       const totalSeconds = Math.floor(ms / 1000);
@@ -79,35 +339,114 @@
       return `${hours}:${minutes}:${seconds}`;
     }
 
+    function timeToMinutes(timeStr) {
+      const [h, m, s] = timeStr.split(':').map(Number);
+      return h * 60 + m + (s >= 30 ? 1 : 0);
+    }
+
+    function formatDuration(minutes) {
+      const hours = Math.floor(minutes / 60);
+      const mins = minutes % 60;
+      return `${hours} س ${mins} د`;
+    }
+
     function startTimer() {
       if (isRunning) return;
-      startTime = Date.now();
+      
+      startTime = Date.now() - elapsedTime;
       isRunning = true;
+      isPaused = false;
+      
+      // تمكين أزرار التحكم
+      pauseBtn.disabled = false;
+      stopBtn.disabled = false;
+      startBtn.disabled = true;
+      
       intervalId = setInterval(() => {
         const now = Date.now();
-        document.getElementById('timer').textContent = formatTime(now - startTime);
+        elapsedTime = now - startTime;
+        timerDisplay.textContent = formatTime(elapsedTime);
       }, 1000);
+    }
+
+    function pauseResumeTimer() {
+      if (!isRunning) return;
+      
+      if (!isPaused) {
+        // إيقاف المؤقت مؤقتاً
+        clearInterval(intervalId);
+        isPaused = true;
+        pauseBtn.textContent = 'استئناف';
+      } else {
+        // استئناف المؤقت
+        startTime = Date.now() - elapsedTime;
+        isPaused = false;
+        pauseBtn.textContent = 'إيقاف مؤقت';
+        
+        intervalId = setInterval(() => {
+          const now = Date.now();
+          elapsedTime = now - startTime;
+          timerDisplay.textContent = formatTime(elapsedTime);
+        }, 1000);
+      }
     }
 
     function stopTimer() {
       if (!isRunning) return;
+      
       clearInterval(intervalId);
       const endTime = Date.now();
-      const duration = formatTime(endTime - startTime);
+      const duration = formatTime(elapsedTime);
       const now = new Date();
-      const date = now.toLocaleDateString('ar-EG');
-      const day = now.toLocaleDateString('ar-EG', { weekday: 'long' });
+      const date = now.toLocaleDateString('ar-EG-u-nu-latn');
+      const day = now.toLocaleDateString('ar-EG-u-nu-latn', { weekday: 'long' });
 
       saveResult(duration, date, day);
       renderTable();
+      renderSummary();
+      updateStats();
+      
+      // إعادة تعيين الحالة
       isRunning = false;
-      document.getElementById('timer').textContent = "00:00:00";
+      isPaused = false;
+      elapsedTime = 0;
+      timerDisplay.textContent = '00:00:00';
+      
+      // إعادة تعيين أزرار التحكم
+      pauseBtn.disabled = true;
+      stopBtn.disabled = true;
+      startBtn.disabled = false;
+      pauseBtn.textContent = 'إيقاف مؤقت';
     }
 
     function saveResult(duration, date, day) {
       const results = JSON.parse(localStorage.getItem('timerResults')) || [];
-      results.push({ duration, date, day });
+      results.push({ 
+        duration, 
+        date, 
+        day,
+        timestamp: new Date().getTime() // تخزين الطابع الزمني
+      });
       localStorage.setItem('timerResults', JSON.stringify(results));
+    }
+
+    function editRecord(index, currentDuration) {
+      const newDuration = prompt('الرجاء إدخال المدة الجديدة بصيغة (س:د:ث) مثل 01:30:45', currentDuration);
+      
+      if (newDuration && /^[0-9]{2}:[0-9]{2}:[0-9]{2}$/.test(newDuration)) {
+        const results = JSON.parse(localStorage.getItem('timerResults')) || [];
+        if (index >= 0 && index < results.length) {
+          results[index].duration = newDuration;
+          localStorage.setItem('timerResults', JSON.stringify(results));
+          
+          // تحديث الجداول والإحصائيات
+          renderTable();
+          renderSummary();
+          updateStats();
+        }
+      } else if (newDuration) {
+        alert('صيغة الوقت غير صحيحة. الرجاء استخدام الصيغة: س:د:ث مثل 01:30:45');
+      }
     }
 
     function renderTable() {
@@ -115,24 +454,138 @@
       table.innerHTML = '';
       const results = JSON.parse(localStorage.getItem('timerResults')) || [];
 
-      results.forEach(entry => {
+      if (results.length === 0) {
+        const row = document.createElement('tr');
+        row.innerHTML = `<td colspan="4" style="padding:20px;color:#bdc3c7;font-style:italic;">لا توجد سجلات عمل حتى الآن</td>`;
+        table.appendChild(row);
+        return;
+      }
+
+      results.forEach((entry, index) => {
         const row = document.createElement('tr');
         row.innerHTML = `
           <td>${entry.duration}</td>
           <td>${entry.date}</td>
           <td>${entry.day}</td>
+          <td><button class="edit-btn" onclick="editRecord(${index}, '${entry.duration}')">تعديل</button></td>
         `;
+        if (index === results.length - 1) {
+          row.style.backgroundColor = 'rgba(46, 204, 113, 0.1)';
+        }
         table.appendChild(row);
       });
     }
 
-    function clearTable() {
-      localStorage.removeItem('timerResults');
-      renderTable();
+    function getWeekInMonth(dateObj) {
+      const date = new Date(dateObj);
+      const firstDay = new Date(date.getFullYear(), date.getMonth(), 1);
+      const dayOfMonth = date.getDate();
+      const firstDayOfWeek = firstDay.getDay(); // 0 (الأحد) إلى 6 (السبت)
+      
+      // حساب رقم الأسبوع في الشهر
+      return Math.ceil((dayOfMonth + firstDayOfWeek) / 7);
     }
 
-    // Load saved data when page loads
-    window.onload = renderTable;
+    function renderSummary() {
+      const summaryBody = document.getElementById('summaryBody');
+      summaryBody.innerHTML = '';
+      const results = JSON.parse(localStorage.getItem('timerResults')) || [];
+      
+      if (results.length === 0) {
+        const row = document.createElement('tr');
+        row.innerHTML = `<td colspan="5" style="padding:20px;color:#bdc3c7;font-style:italic;">لا توجد بيانات للملخص</td>`;
+        summaryBody.appendChild(row);
+        return;
+      }
+
+      const summaryMap = new Map();
+      
+      results.forEach(entry => {
+        const dateObj = new Date(entry.timestamp);
+        const year = dateObj.getFullYear();
+        const month = dateObj.toLocaleString('ar-EG', { month: 'long' });
+        const weekNum = getWeekInMonth(dateObj);
+        const key = `${year}-${month}-${weekNum}`;
+        
+        if (!summaryMap.has(key)) {
+          summaryMap.set(key, {
+            year: year,
+            month: month,
+            weekNum: weekNum,
+            totalMinutes: 0
+          });
+        }
+        
+        const minutes = timeToMinutes(entry.duration);
+        summaryMap.get(key).totalMinutes += minutes;
+      });
+      
+      // تحويل الخريطة إلى مصفوفة وترتيبها
+      const summaryArray = Array.from(summaryMap.values());
+      summaryArray.sort((a, b) => b.year - a.year || b.weekNum - a.weekNum);
+      
+      summaryArray.forEach(item => {
+        const earnings = (item.totalMinutes / 60 * hourlyRate).toFixed(2);
+        const totalTime = formatDuration(item.totalMinutes);
+        
+        const row = document.createElement('tr');
+        row.innerHTML = `
+          <td>${item.year}</td>
+          <td>${item.weekNum}</td>
+          <td>${item.month}</td>
+          <td>${totalTime}</td>
+          <td>${earnings} ر.ع</td>
+        `;
+        summaryBody.appendChild(row);
+      });
+    }
+
+    function updateStats() {
+      const results = JSON.parse(localStorage.getItem('timerResults')) || [];
+      let totalMinutes = 0;
+      const uniqueDates = new Set();
+      
+      results.forEach(entry => {
+        totalMinutes += timeToMinutes(entry.duration);
+        uniqueDates.add(entry.date);
+      });
+      
+      const totalHours = (totalMinutes / 60).toFixed(1);
+      const totalDays = uniqueDates.size; // حساب الأيام الفعلية
+      const totalEarnings = (totalMinutes / 60 * hourlyRate).toFixed(2);
+      
+      document.getElementById('totalHours').textContent = totalHours;
+      document.getElementById('totalDays').textContent = totalDays;
+      document.getElementById('totalEarnings').textContent = totalEarnings;
+    }
+
+    function clearTable() {
+      if (confirm('هل أنت متأكد أنك تريد مسح جميع سجلات العمل؟ لا يمكن التراجع عن هذا الإجراء.')) {
+        localStorage.removeItem('timerResults');
+        renderTable();
+        renderSummary();
+        updateStats();
+        
+        // إعادة تعيين المؤقت
+        if (isRunning) {
+          clearInterval(intervalId);
+          isRunning = false;
+          isPaused = false;
+          elapsedTime = 0;
+          timerDisplay.textContent = '00:00:00';
+          pauseBtn.disabled = true;
+          stopBtn.disabled = true;
+          startBtn.disabled = false;
+          pauseBtn.textContent = 'إيقاف مؤقت';
+        }
+      }
+    }
+
+    window.onload = () => {
+      renderTable();
+      renderSummary();
+      updateStats();
+    };
   </script>
 </body>
 </html>
